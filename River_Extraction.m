@@ -1,23 +1,23 @@
 clc
 clear all
-%% Obtain the input data
+% Obtain the input data
 [num,R]=geotiffread('Water_Frequency.tif'); %% Reading the Water-occurrence frequency image. Here 'num' is the Water-occurrence frequency matrix and R is the spatial reference object.
 [Yt,~]=importdata('Upstream_point.txt');  %% Reading row and column number of most upstream points for each river within the Water-occurrence frequency image. The data in 'Upstream_point.txt' is a 2-column numeric array, i.e.,  the row and column number of each upstream point within the Water-occurrence frequency image. Each row represents an upstream point. Yt(:,1) is row number and Yt(:,2) is column number.
 [Ot,~]=importdata('Outlet_point.txt');  %% Reading row and column number of outlet point within the Water-occurrence frequency image. Ot(1,1) is row number and Ot(1,2) is column number.
 
-%% Set constant value
+% Set constant value
 High_cost=100000000;  %% Set a very high cost score value for the pixel without water.
 Mim_value = 5; %% Set a threshold value for water-occurrence frequency. Pixels with water-occurrence frequency less than this threshold value will be set nodata (-9999), i.e., no water occurrence in order to avoid the impact of abnormal interpretation results.
 Index_a=[-1 -1; -1 0; -1 1; 0 -1; 0 1; 1 -1; 1 0; 1 1]; %% Represent 8 directions for each pixel
 
-%% Pre-process the input data
-num(num<=Mim_value)=-9999;  %% Find pixels with water-occurrence frequency less than threshold value and set the frequency as -9999, i.e., no water occurrence
-a1=Ot(1,1);  %% Obtain row number of outlet point from the input data
-b1=Ot(1,2); %% Obtain column number of outlet point from the input data
+% Pre-process the input data
+num(num<=Mim_value)=-9999;  % Find pixels with water-occurrence frequency less than threshold value and set the frequency as -9999, i.e., no water occurrence
+a1=Ot(1,1);  % Obtain row number of outlet point from the input data
+b1=Ot(1,2); % Obtain column number of outlet point from the input data
 [r1,c1]=size(num);
 
 
-%% Set cost score value for the pixels without water occurrence according to the condition of their neighboring pixels
+% Set cost score value for the pixels without water occurrence according to the condition of their neighboring pixels
 % The cost value of non-water pixels depends on the distance to the nearest water pixel.
 % Cost is the cost value matrix. Cost1, Cost2, and Num1 are intermediate variables.
 Cost=num;
@@ -61,13 +61,13 @@ for k=1:1000
 end
 Cost(num1==High_cost)=High_cost;
 
-%% Set cost score value for the pixels with water according to their water-occurrence frequency
+% Set cost score value for the pixels with water according to their water-occurrence frequency
 % Please refer to the section 2.2
 Max_frequency=max(max(num));
 num(num>0)=(Max_frequency-num(num>0)).^3+1;
 Cost(Cost<Max_frequency+2)=num(Cost<Max_frequency+2);
 
-%% Please refer to steps 1)-8) in the section 2.3
+% Please refer to steps 1)-8) in the section 2.3
 % Find a best path to represent the river network through the cost image
 % CostAcc is the minimum cumulative cost value. CostAcc_Initial, CostAcc_indexR and CostAcc_indexC are intermediate variables.
 CostAcc=zeros(r1,c1);
@@ -103,7 +103,7 @@ for mm=1:100000
     end
 end
 
-%% Please refer to the section 2.3 
+% Please refer to the section 2.3 
 % Trace back through the minimum cumulative cost imagery from goal point to starting point to extract the minimum-cost path, i.e. the river path.
 CostAcc(CostAcc<0)=0;
 [Num_River,~]=size(Yt);
@@ -111,7 +111,7 @@ River=zeros(r1,c1);
 for i=1:Num_River
     River(Yt(i,1),Yt(i,2))=1;
 end
-for i=1:Num_River %% Loop for each river
+for i=1:Num_River % Loop for each river
     a_tem=Yt(i,1);
     b_tem=Yt(i,2);
     for mm=1:18000
@@ -136,6 +136,6 @@ for i=1:Num_River %% Loop for each river
     end
 end
 
-%% Output river extraction result
+% Output river extraction result
 info = geotiffinfo('Water_Frequency.tif');
 geotiffwrite('River.tif',River,R,'GeoKeyDirectoryTag',info.GeoTIFFTags.GeoKeyDirectoryTag);
