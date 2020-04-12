@@ -16,7 +16,6 @@ a1=Ot(1,1);  % Obtain row number of outlet point from the input data
 b1=Ot(1,2); % Obtain column number of outlet point from the input data
 [r1,c1]=size(num);
 
-
 % Set cost score value for the pixels without water occurrence according to the condition of their neighboring pixels
 % The cost value of non-water pixels depends on the distance to the nearest water pixel.
 % Cost is the cost value matrix. Cost1, Cost2, and Num1 are intermediate variables.
