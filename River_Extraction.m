@@ -1,14 +1,14 @@
 clc
 clear all
 % Obtain the input data
-[num,R]=geotiffread('Water_Frequency.tif'); %% Reading the Water-occurrence frequency image. Here 'num' is the Water-occurrence frequency matrix and R is the spatial reference object.
-[Yt,~]=importdata('Upstream_point.txt');  %% Reading row and column number of most upstream points for each river within the Water-occurrence frequency image. The data in 'Upstream_point.txt' is a 2-column numeric array, i.e.,  the row and column number of each upstream point within the Water-occurrence frequency image. Each row represents an upstream point. Yt(:,1) is row number and Yt(:,2) is column number.
-[Ot,~]=importdata('Outlet_point.txt');  %% Reading row and column number of outlet point within the Water-occurrence frequency image. Ot(1,1) is row number and Ot(1,2) is column number.
+[num,R]=geotiffread('Water_Frequency.tif'); % Reading the Water-occurrence frequency image. Here 'num' is the Water-occurrence frequency matrix and R is the spatial reference object.
+[Yt,~]=importdata('Upstream_point.txt');  % Reading row and column number of most upstream points for each river within the Water-occurrence frequency image. The data in 'Upstream_point.txt' is a 2-column numeric array, i.e.,  the row and column number of each upstream point within the Water-occurrence frequency image. Each row represents an upstream point. Yt(:,1) is row number and Yt(:,2) is column number.
+[Ot,~]=importdata('Outlet_point.txt');  % Reading row and column number of outlet point within the Water-occurrence frequency image. Ot(1,1) is row number and Ot(1,2) is column number.
 
 % Set constant value
-High_cost=100000000;  %% Set a very high cost score value for the pixel without water.
-Mim_value = 5; %% Set a threshold value for water-occurrence frequency. Pixels with water-occurrence frequency less than this threshold value will be set nodata (-9999), i.e., no water occurrence in order to avoid the impact of abnormal interpretation results.
-Index_a=[-1 -1; -1 0; -1 1; 0 -1; 0 1; 1 -1; 1 0; 1 1]; %% Represent 8 directions for each pixel
+High_cost=100000000;  % Set a very high cost score value for the pixel without water.
+Mim_value = 5; % Set a threshold value for water-occurrence frequency. Pixels with water-occurrence frequency less than this threshold value will be set nodata (-9999), i.e., no water occurrence in order to avoid the impact of abnormal interpretation results.
+Index_a=[-1 -1; -1 0; -1 1; 0 -1; 0 1; 1 -1; 1 0; 1 1]; % Represent 8 directions for each pixel
 
 % Pre-process the input data
 num(num<=Mim_value)=-9999;  % Find pixels with water-occurrence frequency less than threshold value and set the frequency as -9999, i.e., no water occurrence
